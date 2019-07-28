@@ -1,3 +1,10 @@
+mod lib;
+use lib::model::card::*;
+use lib::model::card::Suit::*;
+use lib::model::card::Rank::*;
+//;
+
 fn main() {
-    println!("Ni Hao, world!");
+    let a = Card::new_by_rank(Ace, Hearts);
+    println!("{:?}", a.stringfy());
 }
