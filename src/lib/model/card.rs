@@ -75,6 +75,24 @@ impl Stringfy for Color{
 }
 
 impl Rank{
+    pub fn from_rankid(id: i32) -> Option<Rank> {
+        match id {
+            1 => Some(Ace),
+            2 => Some(Two),
+            3 => Some(Three),
+            4 => Some(Four),
+            5 => Some(Five),
+            6 => Some(Six),
+            7 => Some(Seven),
+            8 => Some(Eight),
+            9 => Some(Nine),
+            10 => Some(Ten),
+            11 => Some(Jack),
+            12 => Some(Queen),
+            13 => Some(King),
+            _ => None,
+        }
+    }
     pub fn to_rankid(&self) -> i32{
         match &self{
             Ace => 1,
@@ -110,27 +128,52 @@ impl Rank{
         }
     }
 }
+impl Copy for Rank{}
+impl Clone for Rank{
+    fn clone(&self) -> Self {*self}
+}
+
 impl Card{
-    pub fn new_by_rank(crank:Rank, csuit: Suit) -> Card{
-        match csuit{
+    pub fn new_by_rank(cdrank:Rank, cdsuit: Suit) -> Card{
+        match cdsuit{
             Diamonds|Hearts => {
-                let rankid = crank.to_rankid();
-                let cardvalue = crank. to_cardvalue();
-                Card{ rank: crank,
-                      suit: csuit, 
+                let rankid = cdrank.to_rankid();
+                let cardvalue = cdrank. to_cardvalue();
+                Card{ rank: cdrank,
+                      suit: cdsuit, 
                       color: Red, 
                       rank_id: rankid, 
                       value: cardvalue}
             },
             Clubs|Spades => {
-                let rankid = crank.to_rankid();
-                let cardvalue = crank. to_cardvalue();
-                Card{ rank: crank,
-                      suit: csuit, 
-                      color: Red, 
+                let rankid = cdrank.to_rankid();
+                let cardvalue = cdrank. to_cardvalue();
+                Card{ rank: cdrank,
+                      suit: cdsuit, 
+                      color: Black, 
                       rank_id: rankid, 
                       value: cardvalue}
             }
+        }
+    }
+    pub fn new_by_rankid(rkid: i32, cdsuit: Suit) -> Card{
+        match cdsuit{
+            Diamonds|Hearts => {
+                let rk = Rank::from_rankid(rkid).unwrap();
+                Card{ rank: rk,
+                      suit: cdsuit, 
+                      color: Red, 
+                      rank_id: rkid, 
+                      value: rk.clone().to_cardvalue()}
+            },
+            Clubs|Spades => {
+                let rk = Rank::from_rankid(rkid).unwrap();
+                Card{ rank: rk,
+                      suit: cdsuit, 
+                      color: Black, 
+                      rank_id: rkid, 
+                      value: rk.clone().to_cardvalue()}
+            },
         }
     }
 
