@@ -56,14 +56,16 @@ impl Player for Banker {
                 None => break
             }
         }
-        match self.darkcard.as_ref(){
-            Some(x) => {
-                total_value += x.get_value();
-                if x.get_rank() == Ace{
-                    count_ace += 1;
-                }
-            },
-            None => panic!("darkcard is empty, impossible")
+        if self.darkcard.is_some(){
+            match self.darkcard.as_ref(){
+                Some(x) => {
+                    total_value += x.get_value();
+                    if x.get_rank() == Ace{
+                        count_ace += 1;
+                    }
+                },
+                None => panic!("darkcard is empty, impossible")
+            }
         }
         if total_value > 21 {
             total_value -= 10*count_ace;
@@ -121,6 +123,19 @@ impl Stringfy for Banker{
         }
         if self.darkcard.is_some(){
             res.push_str("Darkcard: "); res.push_str(self.darkcard.as_ref().unwrap().stringfy().as_str()); res.push('\n');
+        }
+        res
+    }
+}
+impl Stringfy for Human{
+    fn stringfy(&self) -> String{
+        let mut res = String::new();
+        let mut it = self.lightcard.iter();
+        loop{
+            match it.next(){
+                Some(x) => {res.push_str("lightcards: "); res.push_str(x.stringfy().as_str()); res.push('\n')},
+                None => break
+            }
         }
         res
     }

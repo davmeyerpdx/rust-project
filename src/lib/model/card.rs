@@ -11,10 +11,12 @@ pub enum Suit{
     Hearts,
     Spades,
 }
+
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Rank{
     Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, 
 }
+
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Color{
     Red,
@@ -34,12 +36,14 @@ pub struct Deck(pub Vec<Card>);
 pub trait Stringfy{
     fn stringfy(&self) -> String;
 }
+
 impl Stringfy for Card{
     fn stringfy(&self) -> String{
         format!("rank:{}, suit:{}, color:{}, rank_id:{}, value:{}", 
             self.rank.stringfy(), self.suit.stringfy(), self.color.stringfy(), self.rank_id, self.value)
     }
 }
+
 impl Stringfy for Rank{
     fn stringfy(&self) -> String{
         match &self{
@@ -60,6 +64,7 @@ impl Stringfy for Rank{
         
     }
 }
+
 impl Stringfy for Suit{
     fn stringfy(&self) -> String{
         match &self{
@@ -70,6 +75,7 @@ impl Stringfy for Suit{
         }
     }
 }
+
 impl Stringfy for Color{
     fn stringfy(&self) -> String{
         match &self{
@@ -193,6 +199,7 @@ impl Card{
         self.rank_id
     }
 }
+
 impl Deck{
     pub fn new() -> Deck{
         let mut deck = Deck(Vec::new());
@@ -221,6 +228,7 @@ impl Deck{
         self.0.len() as u8
     }
 }
+
 impl Stringfy for Deck{
     fn stringfy(&self) -> String {
         let mut res = String::new();
