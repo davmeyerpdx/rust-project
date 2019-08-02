@@ -3,20 +3,22 @@ use crate::*;
 pub trait Player{
     fn compute_value(&self) -> u8;
     fn draw_card(&mut self, deck: &mut Deck);
+    fn check_blackjack(&mut self);
 }
 
 pub struct Banker{
-    lightcard: Vec<Card>,
-    darkcard: Option<Card>,
-    blackjack: bool,
+    pub lightcard: Vec<Card>,
+    pub darkcard: Option<Card>,
+    pub blackjack: bool,
+    pub flip_card: bool,
 }
 pub struct Human{
     lightcard: Vec<Card>,
-    blackjack: bool,
-    chip: i32,
-    bet: i32,
-    insurance: bool,
-    giveup: bool,
+    pub blackjack: bool,
+    pub chip: u32,
+    pub bet: u32,
+    pub insurance: bool,
+    pub giveup: bool,
 }
 
 impl Banker{
@@ -25,6 +27,31 @@ impl Banker{
             lightcard: Vec::new(),
             darkcard: None,
             blackjack: false,
+            flip_card: false,
+        }
+    }
+    pub fn check_darkcard_is_ace(&self) -> bool {
+        match self.darkcard.as_ref(){
+            Some(x) => {
+                if x.get_rank() == Ace {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            None => panic!("Game Init error"),
+        }
+    }
+     pub fn check_lightcard_is_ace(&self) -> bool {
+        match self.lightcard.first(){
+            Some(x) => {
+                if x.get_rank() == Ace {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            None => panic!("Game Init error"),
         }
     }
 }
@@ -38,6 +65,40 @@ impl Human{
             insurance: false, 
             giveup: false,
         }
+    }
+    pub fn do_bet(&mut self, size: u32) -> bool {
+        if size <= self.chip {
+            self.chip -= size;
+            self.bet += size;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    pub fn win(&mut self) {
+        if self.blackjack{
+            self.chip += self.bet*3;
+        }
+        else {
+            self.chip += self.bet*2;
+        }
+        self.bet = 0;
+    }
+    pub fn lose(&mut self) {
+        self.bet = 0;
+    }
+    pub fn tie(&mut self) {
+        self.chip += self.bet;
+        self.bet = 0;
+    }
+    pub fn get_2xinsurance(&mut self){
+        if self.insurance == true{
+            self.chip += self.bet;
+        }
+    }
+    pub fn lose_insurance(&mut self){
+        self.bet /= 2;
     }
 }
 impl Player for Banker {
@@ -83,6 +144,13 @@ impl Player for Banker {
             self.lightcard.push(deck.0.pop().unwrap());
         }
     }
+    fn check_blackjack(&mut self){
+        if self.compute_value() == 21 {
+            self.blackjack = true;
+        } else {
+            self.blackjack = false;
+        }
+    }
 }
 impl Player for Human {
     fn compute_value(&self) -> u8{
@@ -109,6 +177,13 @@ impl Player for Human {
     }
     fn draw_card(&mut self, deck: &mut Deck){
         self.lightcard.push(deck.0.pop().unwrap());
+    }
+    fn check_blackjack(&mut self){
+        if self.compute_value() == 21 {
+            self.blackjack = true;
+        } else {
+            self.blackjack = false;
+        }
     }
 }
 impl Stringfy for Banker{
