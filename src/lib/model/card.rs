@@ -2,6 +2,8 @@ use Suit::*;
 use Rank::*;
 use Color::*;
 
+use rand::{thread_rng, Rng};
+
 pub enum Suit{
     Diamonds,
     Clubs,
@@ -177,4 +179,42 @@ impl Card{
         }
     }
 
+}
+impl Deck{
+    pub fn new() -> Deck{
+        let mut deck = Deck(Vec::new());
+        for rank_id in 1..=13 {
+            deck.0.insert(0, Card::new_by_rankid(rank_id, Diamonds));
+        }
+        for rank_id in 1..=13 {
+            deck.0.insert(0, Card::new_by_rankid(rank_id, Clubs));
+        }
+        for rank_id in 1..=13 {
+            deck.0.insert(0, Card::new_by_rankid(rank_id, Hearts));
+        }
+        for rank_id in 1..=13 {
+            deck.0.insert(0, Card::new_by_rankid(rank_id, Spades));
+        }
+        deck
+    }
+    pub fn shuffle(&mut self){
+        let mut rng = thread_rng();
+        for i in 0..=51{
+            let j = rng.gen_range(0, 51);
+            self.0.swap(i, j)
+        }
+    }
+}
+impl Stringfy for Deck{
+    fn stringfy(&self) -> String {
+        let mut res = String::new();
+        let mut it = self.0.iter();
+        for _ in 0..=51{
+            match it.next(){
+                Some(x) => {res.push_str(x.stringfy().as_str()); res.push('\n')},
+                None => break
+            }
+        }
+        res
+    }
 }
