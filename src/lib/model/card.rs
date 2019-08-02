@@ -4,15 +4,18 @@ use Color::*;
 
 use rand::{thread_rng, Rng};
 
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Suit{
     Diamonds,
     Clubs,
     Hearts,
     Spades,
 }
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Rank{
     Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, 
 }
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Color{
     Red,
     Black,
@@ -22,11 +25,11 @@ pub struct Card{
     rank: Rank,
     suit: Suit,
     color: Color,
-    rank_id: i32,
-    value: i32,
+    rank_id: u8,
+    value: u8,
 }
 
-pub struct Deck(Vec<Card>);
+pub struct Deck(pub Vec<Card>);
 
 pub trait Stringfy{
     fn stringfy(&self) -> String;
@@ -40,19 +43,19 @@ impl Stringfy for Card{
 impl Stringfy for Rank{
     fn stringfy(&self) -> String{
         match &self{
-            Ace     =>  format!("Ace"),
-            Two     =>  format!("Two"), 
-            Three   =>  format!("Three"),
-            Four    =>  format!("Four"), 
-            Five    =>  format!("Five"), 
-            Six     =>  format!("Six"), 
-            Seven   =>  format!("Seven"), 
-            Eight   =>  format!("Eight"), 
-            Nine    =>  format!("Nine"), 
-            Ten     =>  format!("Ten"), 
-            Jack    =>  format!("Jack"), 
-            Queen   =>  format!("Queen"), 
-            King    =>  format!("King"),
+            Ace     =>  format!("A"),
+            Two     =>  format!("2"), 
+            Three   =>  format!("3"),
+            Four    =>  format!("4"), 
+            Five    =>  format!("5"), 
+            Six     =>  format!("6"), 
+            Seven   =>  format!("7"), 
+            Eight   =>  format!("8"), 
+            Nine    =>  format!("9"), 
+            Ten     =>  format!("10"), 
+            Jack    =>  format!("J"), 
+            Queen   =>  format!("Q"), 
+            King    =>  format!("K"),
         }
         
     }
@@ -60,10 +63,10 @@ impl Stringfy for Rank{
 impl Stringfy for Suit{
     fn stringfy(&self) -> String{
         match &self{
-            Diamonds => format!("Diamonds"),
-            Clubs    => format!("Clubs"),
-            Hearts   => format!("Hearts"),
-            Spades   => format!("Spades"),
+            Diamonds => format!("♦"),
+            Clubs    => format!("♣"),
+            Hearts   => format!("♥"),
+            Spades   => format!("♠"),
         }
     }
 }
@@ -77,7 +80,7 @@ impl Stringfy for Color{
 }
 
 impl Rank{
-    pub fn from_rankid(id: i32) -> Option<Rank> {
+    pub fn from_rankid(id: u8) -> Option<Rank> {
         match id {
             1 => Some(Ace),
             2 => Some(Two),
@@ -95,7 +98,7 @@ impl Rank{
             _ => None,
         }
     }
-    pub fn to_rankid(&self) -> i32{
+    pub fn to_rankid(&self) -> u8{
         match &self{
             Ace => 1,
             Two => 2, 
@@ -112,7 +115,7 @@ impl Rank{
             King => 13,
         }
     }
-     pub fn to_cardvalue(&self) -> i32{
+     pub fn to_cardvalue(&self) -> u8{
         match &self{
             Ace => 11,
             Two => 2, 
@@ -130,17 +133,13 @@ impl Rank{
         }
     }
 }
-impl Copy for Rank{}
-impl Clone for Rank{
-    fn clone(&self) -> Self {*self}
-}
 
 impl Card{
     pub fn new_by_rank(cdrank:Rank, cdsuit: Suit) -> Card{
         match cdsuit{
             Diamonds|Hearts => {
                 let rankid = cdrank.to_rankid();
-                let cardvalue = cdrank. to_cardvalue();
+                let cardvalue = cdrank.to_cardvalue();
                 Card{ rank: cdrank,
                       suit: cdsuit, 
                       color: Red, 
@@ -158,7 +157,7 @@ impl Card{
             }
         }
     }
-    pub fn new_by_rankid(rkid: i32, cdsuit: Suit) -> Card{
+    pub fn new_by_rankid(rkid: u8, cdsuit: Suit) -> Card{
         match cdsuit{
             Diamonds|Hearts => {
                 let rk = Rank::from_rankid(rkid).unwrap();
@@ -178,22 +177,36 @@ impl Card{
             },
         }
     }
-
+    pub fn get_value(&self) -> u8 {
+        self.value
+    }
+    pub fn get_suit(&self) -> Suit{
+        self.suit
+    }
+    pub fn get_rank(&self) -> Rank{
+        self.rank
+    }
+    pub fn get_color(&self) -> Color{
+        self.color
+    }
+    pub fn get_rankid(&self) -> u8{
+        self.rank_id
+    }
 }
 impl Deck{
     pub fn new() -> Deck{
         let mut deck = Deck(Vec::new());
         for rank_id in 1..=13 {
-            deck.0.insert(0, Card::new_by_rankid(rank_id, Diamonds));
+            deck.0.push(Card::new_by_rankid(rank_id, Diamonds));
         }
         for rank_id in 1..=13 {
-            deck.0.insert(0, Card::new_by_rankid(rank_id, Clubs));
+            deck.0.push(Card::new_by_rankid(rank_id, Clubs));
         }
         for rank_id in 1..=13 {
-            deck.0.insert(0, Card::new_by_rankid(rank_id, Hearts));
+            deck.0.push(Card::new_by_rankid(rank_id, Hearts));
         }
         for rank_id in 1..=13 {
-            deck.0.insert(0, Card::new_by_rankid(rank_id, Spades));
+            deck.0.push(Card::new_by_rankid(rank_id, Spades));
         }
         deck
     }
@@ -203,6 +216,9 @@ impl Deck{
             let j = rng.gen_range(0, 51);
             self.0.swap(i, j)
         }
+    }
+    pub fn length(&self) -> u8{
+        self.0.len() as u8
     }
 }
 impl Stringfy for Deck{
