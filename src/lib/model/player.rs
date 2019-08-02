@@ -66,7 +66,7 @@ impl Human{
             giveup: false,
         }
     }
-    pub fn do_bet(&mut self, size: u32) -> bool {
+    pub fn add_bet(&mut self, size: u32) -> bool {
         if size <= self.chip {
             self.chip -= size;
             self.bet += size;
