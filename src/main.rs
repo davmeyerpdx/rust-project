@@ -17,6 +17,11 @@ fn add_bet_(human: &mut Human){
     };
 }
 
+fn test()
+{
+    println!("Hello");
+}
+
 fn sample_game_loop(){
     let stdin = io::stdin();
     //------------game_init-----------
