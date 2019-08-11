@@ -41,6 +41,8 @@ impl Banker{
             },
             None => panic!("Game Init error"),
         }
+
+
     }
      pub fn check_lightcard_is_ace(&self) -> bool {
         match self.lightcard.first(){
@@ -55,6 +57,36 @@ impl Banker{
         }
     }
 }
+
+#[cfg(test)]
+mod banker_tests {
+
+    #[test]
+    #[should_panic]
+    fn test_banker() {
+       
+        use super::card::Deck;
+        use crate::lib::model::player::Player;
+
+        let mut d = Deck::new();
+        //d.shuffle();
+
+        let mut b = super::Banker {
+          
+            lightcard: Vec::new(),
+            darkcard:  None,
+            blackjack: false,
+            flip_card: false
+        };
+
+        b.draw_card(&mut d);
+        b.draw_card(&mut d);
+        
+        assert!(b.check_darkcard_is_ace());
+        assert!(b.check_lightcard_is_ace());
+    }
+}
+
 impl Human{
     pub fn new() -> Self{
         Human{
@@ -101,6 +133,30 @@ impl Human{
         self.bet /= 2;
     }
 }
+
+#[cfg(test)]
+mod Human_tests {
+
+    #[test]
+    //#[should_panic]
+    fn test_human () {
+
+        let mut h = super::Human {
+            
+            lightcard: Vec::new(),
+            blackjack: false,
+            chip: 102,
+            bet: 0,
+            insurance: false, 
+            giveup: false,
+        };
+       
+        assert!(h.add_bet(101));
+        assert_eq!(false, h.add_bet(100));
+
+    }
+}
+
 impl Player for Banker {
     fn compute_value(&self) -> u8{
         let mut count_ace = 0;
