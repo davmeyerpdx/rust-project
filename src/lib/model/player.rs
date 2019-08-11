@@ -133,27 +133,89 @@ impl Human{
         self.bet /= 2;
     }
 }
+        
+/*
+{
+    
+    lightcard: Vec::new(),
+    blackjack: false,
+    chip: 102,
+    bet: 0,
+    insurance: false, 
+    giveup: false,
+};
+*/
 
 #[cfg(test)]
 mod Human_tests {
 
     #[test]
-    //#[should_panic]
-    fn test_human () {
+    //BET
+    fn test_human_bet () {
 
-        let mut h = super::Human {
-            
-            lightcard: Vec::new(),
-            blackjack: false,
-            chip: 102,
-            bet: 0,
-            insurance: false, 
-            giveup: false,
-        };
-       
+        let mut h = super::Human::new();
+        
+        h.chip = 102;
+
+        //able to add the bet
         assert!(h.add_bet(101));
-        assert_eq!(false, h.add_bet(100));
+        //is bet value updated?
+        assert!(h.bet == 101);
 
+        //show that we cant bet when we dont have enough money
+        assert_eq!(false, h.add_bet(100));
+    }
+    
+    #[test]
+    //WIN
+    fn test_human_win () {
+
+        let mut h = super::Human::new();
+        
+        h.chip      = 1;
+        h.blackjack = true;
+        h.bet       = 1;
+        h.win();
+
+        //winnings with blackjack = x + 3x
+        assert!(h.chip == 4);
+
+        h.chip      = 1;
+        h.blackjack = false;
+        h.bet       = 1;
+        h.win();
+
+        //winnings w/o blackjack = x + 2x
+        assert!(h.chip == 3);
+    }
+
+    #[test]
+    //LOSE
+    fn test_human_lose () {
+        
+        let mut h = super::Human::new();
+
+        h.bet = 1;
+        h.lose();
+
+        //amount bet will go to 0 with loss
+        assert!(h.bet == 0);
+    }
+    
+    #[test]
+    //TIE
+    fn test_human_tie () {
+
+        let mut h = super::Human::new();
+
+        h.chip = 1;
+        h.bet  = 1;
+        h.tie();
+
+        //get chip back from bet
+        assert!(h.chip == 2);
+        //chips in bet get set back to zero
+        assert!(h.bet  == 0);
     }
 }
 
