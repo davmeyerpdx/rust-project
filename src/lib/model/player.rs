@@ -231,6 +231,18 @@ mod Human_tests {
         
         assert!(h.chip == 2);
     }
+    
+    #[test]
+    //GET 2X INSURANCE
+    fn test_human_loseInsurance () {
+
+        let mut h = super::Human::new();
+
+        h.bet = 2;
+        h.lose_insurance();
+
+        assert!(h.bet == 1);
+    }
 }
 
 impl Player for Banker {
@@ -284,6 +296,76 @@ impl Player for Banker {
         }
     }
 }
+
+
+#[cfg(test)]
+mod player_tests {
+
+    #[test]
+    //BET
+    fn test_player_bet () {
+        
+        use super::card::Deck;
+        use crate::lib::model::player::Player;
+
+        let mut d = Deck::new();
+        let mut b = super::Banker::new();
+
+        //before drawing cards hand value at zero
+        let mut i: u8 = b.compute_value();
+        assert!(i == 0);
+
+        //after drawing cards hand value greater than zero
+        b.draw_card(&mut d);
+
+        i = b.compute_value();
+        assert!(i > 0);
+    }
+
+    #[test]
+    //DRAW
+    fn test_player_draw () {
+        
+        use super::card::Deck;
+        use crate::lib::model::player::Player;
+
+        let mut d = Deck::new();
+        let mut b = super::Banker::new();
+
+        //we have no cards in hand at start
+        assert!(b.lightcard.is_empty());
+        assert!(b.darkcard.is_none());
+
+        //drawing a card will be put into the lightcard slot...
+        b.draw_card(&mut d);
+        assert_eq!(false, b.lightcard.is_empty());
+    
+        //...but darkcard slot is still empty
+        assert!(b.darkcard.is_none());
+        
+        //second card goes in the dark cards slot
+        b.draw_card(&mut d);
+        assert_eq!(false, b.darkcard.is_none());
+    }
+
+    #[test]
+    //DRAW
+    fn test_player_blackjack () {
+        
+        use super::card::Deck;
+        use crate::lib::model::player::Player;
+
+        let mut d = Deck::new();
+        let mut b = super::Banker::new();
+
+        b.blackjack = true;
+        b.check_blackjack();
+
+        //check_blackjack w/o correct value in hand switches b.blackjack to false
+        assert_eq!(false, b.blackjack);
+    }
+}
+
 impl Player for Human {
     fn compute_value(&self) -> u8{
         let mut count_ace = 0;
