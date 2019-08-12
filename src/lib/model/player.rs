@@ -217,6 +217,20 @@ mod Human_tests {
         //chips in bet get set back to zero
         assert!(h.bet  == 0);
     }
+
+    #[test]
+    //GET 2X INSURANCE
+    fn test_human_getInsurance () {
+
+        let mut h = super::Human::new();
+
+        h.chip      = 1;
+        h.bet       = 1;
+        h.insurance = true;
+        h.get_2xinsurance();
+        
+        assert!(h.chip == 2);
+    }
 }
 
 impl Player for Banker {
