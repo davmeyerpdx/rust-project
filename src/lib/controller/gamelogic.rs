@@ -1,4 +1,4 @@
-
+/*
 //TODO：Need to be changed to graphic version
 // now it's only the command line version
 use std::io::{self, BufRead};
@@ -144,3 +144,4 @@ fn sample_game_loop(){
         return;
     }
 }
+*/
