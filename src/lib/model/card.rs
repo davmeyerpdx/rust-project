@@ -6,10 +6,10 @@ use rand::{thread_rng, Rng};
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Suit{
-    Diamonds,
-    Clubs,
-    Hearts,
-    Spades,
+    Diamond,
+    Club,
+    Heart,
+    Spade,
 }
 
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -39,8 +39,11 @@ pub trait Stringfy{
 
 impl Stringfy for Card{
     fn stringfy(&self) -> String{
+        /*
         format!("rank:{}, suit:{}, color:{}, rank_id:{}, value:{}", 
             self.rank.stringfy(), self.suit.stringfy(), self.color.stringfy(), self.rank_id, self.value)
+        */
+        format!("{}_{}", self.rank.stringfy(), self.suit.stringfy())
     }
 }
 
@@ -68,10 +71,10 @@ impl Stringfy for Rank{
 impl Stringfy for Suit{
     fn stringfy(&self) -> String{
         match &self{
-            Diamonds => format!("♦"),
-            Clubs    => format!("♣"),
-            Hearts   => format!("♥"),
-            Spades   => format!("♠"),
+            Diamond => format!("Diamond"),
+            Club    => format!("Club"),
+            Heart   => format!("Heart"),
+            Spade   => format!("Spade"),
         }
     }
 }
@@ -143,7 +146,7 @@ impl Rank{
 impl Card{
     pub fn new_by_rank(cdrank:Rank, cdsuit: Suit) -> Card{
         match cdsuit{
-            Diamonds|Hearts => {
+            Diamond|Heart => {
                 let rankid = cdrank.to_rankid();
                 let cardvalue = cdrank.to_cardvalue();
                 Card{ rank: cdrank,
@@ -152,7 +155,7 @@ impl Card{
                       rank_id: rankid, 
                       value: cardvalue}
             },
-            Clubs|Spades => {
+            Club|Spade => {
                 let rankid = cdrank.to_rankid();
                 let cardvalue = cdrank. to_cardvalue();
                 Card{ rank: cdrank,
@@ -165,7 +168,7 @@ impl Card{
     }
     pub fn new_by_rankid(rkid: u8, cdsuit: Suit) -> Card{
         match cdsuit{
-            Diamonds|Hearts => {
+            Diamond|Heart => {
                 let rk = Rank::from_rankid(rkid).unwrap();
                 Card{ rank: rk,
                       suit: cdsuit, 
@@ -173,7 +176,7 @@ impl Card{
                       rank_id: rkid, 
                       value: rk.clone().to_cardvalue()}
             },
-            Clubs|Spades => {
+            Club|Spade => {
                 let rk = Rank::from_rankid(rkid).unwrap();
                 Card{ rank: rk,
                       suit: cdsuit, 
@@ -198,22 +201,25 @@ impl Card{
     pub fn get_rankid(&self) -> u8{
         self.rank_id
     }
+    pub fn get_pic(&self) -> String{
+        format!("/{}.png", self.stringfy())
+    }
 }
 
 impl Deck{
     pub fn new() -> Deck{
         let mut deck = Deck(Vec::new());
         for rank_id in 1..=13 {
-            deck.0.push(Card::new_by_rankid(rank_id, Diamonds));
+            deck.0.push(Card::new_by_rankid(rank_id, Diamond));
         }
         for rank_id in 1..=13 {
-            deck.0.push(Card::new_by_rankid(rank_id, Clubs));
+            deck.0.push(Card::new_by_rankid(rank_id, Club));
         }
         for rank_id in 1..=13 {
-            deck.0.push(Card::new_by_rankid(rank_id, Hearts));
+            deck.0.push(Card::new_by_rankid(rank_id, Heart));
         }
         for rank_id in 1..=13 {
-            deck.0.push(Card::new_by_rankid(rank_id, Spades));
+            deck.0.push(Card::new_by_rankid(rank_id, Spade));
         }
         deck
     }
@@ -242,3 +248,9 @@ impl Stringfy for Deck{
         res
     }
 }
+/*
+impl ToString for Card{
+    fn to_string(&self) -> String{
+        format!("{}_{}", self.rank.to_string(), self.suit.to_string())
+    }
+}*/
