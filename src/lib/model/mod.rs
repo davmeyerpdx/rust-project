@@ -6,3 +6,6 @@ pub use card::Suit::*;
 
 pub mod player;
 pub use player::*;
+
+pub mod tests;
+pub use tests::*;
