@@ -51,15 +51,15 @@ impl MainState {
             let dst = &i.1;
             graphics::draw(ctx, img, (*dst, )).unwrap();
         }
-        let bust_str = text.to_string();
-        let mut bust_view = graphics::Text::default();
+        let text_str = text.to_string();
+        let mut text_view = graphics::Text::default();
         let color = Color::from((255, 0, 0, 255));
-        for ch in bust_str.chars() {
-            bust_view.add(
+        for ch in text_str.chars() {
+            text_view.add(
                 TextFragment::new(ch).scale(Scale::uniform(80.0 + 80.0 * rand::random::<f32>())),
             );
         }
-        graphics::draw(ctx, &bust_view, (ggez::mint::Point2{x: 100.0, y: 100.0}, 0.0, color)).unwrap();
+        graphics::draw(ctx, &text_view, (ggez::mint::Point2{x: 100.0, y: 100.0}, 0.0, color)).unwrap();
         graphics::present(ctx).unwrap();
         let ten_millis = time::Duration::from_millis(4000);
         let now = time::Instant::now();
@@ -125,7 +125,6 @@ impl MainState {
 }
 impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
-        println!("Deck: {}", self.deck.length());
         Ok(())
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
@@ -217,6 +216,21 @@ impl event::EventHandler for MainState {
                 }
                 //--------------draw cards -------------------
             }
+            -1 => {
+                graphics::clear(ctx, [0.1, 0.2, 0.3, 1.0].into());
+                let rectangle =
+                    graphics::Mesh::new_rectangle(ctx, graphics::DrawMode::fill(), [0.0, 0.0, 600.0, 400.0].into(), [0.0, 0.0, 0.0, 0.8].into())?;
+                graphics::draw(ctx, &rectangle, (ggez::mint::Point2 { x: 0.0, y: 0.0 },));
+                let text_str = "Game End".to_string();
+                let mut text_view = graphics::Text::default();
+                let color = Color::from((255, 0, 0, 255));
+                for ch in text_str.chars() {
+                    text_view.add(
+                        TextFragment::new(ch).scale(Scale::uniform(80.0 + 80.0 * rand::random::<f32>())),
+                    );
+                }
+                graphics::draw(ctx, &text_view, (ggez::mint::Point2{x: 30.0, y: 100.0}, 0.0, color)).unwrap();
+            }
             _ => {}
         }
 
@@ -283,6 +297,9 @@ impl event::EventHandler for MainState {
                 else if !self.banker.blackjack && !self.human.blackjack {
                     self.result_draw_reset(ctx, "You lose");
                     self.human.lose();
+                    if self.human.chip == 0 {
+                        self.game_state = -1;
+                    }
                 }
             }
             else if self.banker.compute_value() < self.human.compute_value() {
@@ -292,6 +309,9 @@ impl event::EventHandler for MainState {
             else if self.banker.compute_value() > self.human.compute_value() {
                 self.result_draw_reset(ctx, "You lose");
                 self.human.lose();
+                if self.human.chip == 0 {
+                    self.game_state = -1;
+                }
             }
         }
         //------------------Stand buttons event--------------------
@@ -302,7 +322,10 @@ impl event::EventHandler for MainState {
         //------------------Double buttons event--------------------
         //------------------Surrender buttons event--------------------
         if (x > 280.0 && y > 190.0) && (x < 280.0+80.0 && y < 190.0+40.0) && self.game_state == 1 {
-           self.result_draw_reset(ctx, "You lose");
+            self.result_draw_reset(ctx, "You lose");
+            if self.human.chip == 0 {
+                self.game_state = -1;
+            }
         }
         //------------------Surrender buttons event--------------------
         //------------------Add bet buttons event--------------------
