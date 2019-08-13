@@ -59,7 +59,7 @@ impl Banker{
 }
 
 #[cfg(test)]
-mod banker_tests {
+mod basic_banker_tests {
 
     #[test]
     #[should_panic]
@@ -82,6 +82,7 @@ mod banker_tests {
         b.draw_card(&mut d);
         b.draw_card(&mut d);
         
+        //drawing two cards neither of which is an ace
         assert!(b.check_darkcard_is_ace());
         assert!(b.check_lightcard_is_ace());
     }
@@ -134,20 +135,8 @@ impl Human{
     }
 }
         
-/*
-{
-    
-    lightcard: Vec::new(),
-    blackjack: false,
-    chip: 102,
-    bet: 0,
-    insurance: false, 
-    giveup: false,
-};
-*/
-
 #[cfg(test)]
-mod Human_tests {
+mod basic_human_tests {
 
     #[test]
     //BET
@@ -245,6 +234,7 @@ mod Human_tests {
     }
 }
 
+
 impl Player for Banker {
     fn compute_value(&self) -> u8{
         let mut count_ace = 0;
@@ -299,11 +289,11 @@ impl Player for Banker {
 
 
 #[cfg(test)]
-mod player_tests {
+mod player_banker_tests {
 
     #[test]
     //BET
-    fn test_player_bet () {
+    fn test_banker_compute_value () {
         
         use super::card::Deck;
         use crate::lib::model::player::Player;
@@ -324,7 +314,7 @@ mod player_tests {
 
     #[test]
     //DRAW
-    fn test_player_draw () {
+    fn test_banker_draw () {
         
         use super::card::Deck;
         use crate::lib::model::player::Player;
@@ -349,8 +339,8 @@ mod player_tests {
     }
 
     #[test]
-    //DRAW
-    fn test_player_blackjack () {
+    //BLACKJACK
+    fn test_banker_blackjack () {
         
         use super::card::Deck;
         use crate::lib::model::player::Player;
@@ -400,6 +390,67 @@ impl Player for Human {
         }
     }
 }
+
+#[cfg(test)]
+mod player_human_tests {
+
+    #[test]
+    //BET
+    fn test_human_compute_value () {
+        
+        use super::card::Deck;
+        use crate::lib::model::player::Player;
+
+        let mut d = Deck::new();
+        let mut h = super::Human::new();
+
+        //before drawing cards hand value at zero
+        let mut i: u8 = h.compute_value();
+        assert!(i == 0);
+
+        //after drawing cards hand value greater than zero
+        h.draw_card(&mut d);
+
+        i = h.compute_value();
+        assert!(i > 0);
+    }
+
+    #[test]
+    //DRAW
+    fn test_human_draw () {
+        
+        use super::card::Deck;
+        use crate::lib::model::player::Player;
+
+        let mut d = Deck::new();
+        let mut h = super::Human::new();
+
+        //we have no cards in hand at start
+        assert!(h.lightcard.is_empty());
+
+        //drawing a card will be put into the lightcard slot
+        h.draw_card(&mut d);
+        assert_eq!(false, h.lightcard.is_empty());
+    }
+
+    #[test]
+    //BLACKJACK
+    fn test_human_blackjack () {
+        
+        use super::card::Deck;
+        use crate::lib::model::player::Player;
+
+        let mut d = Deck::new();
+        let mut h = super::Human::new();
+
+        h.blackjack = true;
+        h.check_blackjack();
+
+        //check_blackjack w/o correct value in hand switches b.blackjack to false
+        assert_eq!(false, h.blackjack);
+    }
+}
+
 impl Stringfy for Banker{
     fn stringfy(&self) -> String{
         let mut res = String::new();
