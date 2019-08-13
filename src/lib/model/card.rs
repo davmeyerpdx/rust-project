@@ -39,8 +39,11 @@ pub trait Stringfy{
 
 impl Stringfy for Card{
     fn stringfy(&self) -> String{
+        /*
         format!("rank:{}, suit:{}, color:{}, rank_id:{}, value:{}", 
             self.rank.stringfy(), self.suit.stringfy(), self.color.stringfy(), self.rank_id, self.value)
+        */
+        format!("{}_{}", self.rank.stringfy(), self.suit.stringfy())
     }
 }
 
@@ -68,10 +71,10 @@ impl Stringfy for Rank{
 impl Stringfy for Suit{
     fn stringfy(&self) -> String{
         match &self{
-            Diamond => format!("♦"),
-            Club    => format!("♣"),
-            Heart   => format!("♥"),
-            Spade   => format!("♠"),
+            Diamond => format!("Diamond"),
+            Club    => format!("Club"),
+            Heart   => format!("Heart"),
+            Spade   => format!("Spade"),
         }
     }
 }
@@ -198,6 +201,9 @@ impl Card{
     pub fn get_rankid(&self) -> u8{
         self.rank_id
     }
+    pub fn get_pic(&self) -> String{
+        format!("/{}.png", self.stringfy())
+    }
 }
 
 impl Deck{
@@ -242,3 +248,9 @@ impl Stringfy for Deck{
         res
     }
 }
+/*
+impl ToString for Card{
+    fn to_string(&self) -> String{
+        format!("{}_{}", self.rank.to_string(), self.suit.to_string())
+    }
+}*/

@@ -13,7 +13,7 @@ pub struct Banker{
     pub flip_card: bool,
 }
 pub struct Human{
-    lightcard: Vec<Card>,
+    pub lightcard: Vec<Card>,
     pub blackjack: bool,
     pub chip: u32,
     pub bet: u32,
