@@ -8,7 +8,7 @@
 ## How to run
 *This game was built using the ggez framework. As it stands now, all you must do to run this program is to 
 ```
-cargo build
+cargo run
 ```
 Playing the game, however, cannot be accomplished through ssh such as putty. As a disclaimer, when trying to run this game on a fresh PC we encountered a few difficulties and ended up having to download several packages before we were able to start. These packages were prompted to us. We hope that you do not encounter the same issue.*
 
