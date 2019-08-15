@@ -13,6 +13,7 @@ use std::path;
 use std::{thread, time};
 
 const SCREEN_SIZE: (f32, f32) = (600.0, 400.0);
+//------Change the Card every time when a new card shoule be added to screen----------
 const SPACE_OUT: f32 = 40.0;
 const BANKER_LINE: f32 = 20.0;
 const HUMAN_LINE: f32 = 340.0;
@@ -28,6 +29,7 @@ fn bk_dst() -> f32 {
     unsafe { BK_DST += SPACE_OUT };
     tmp
 }
+//------Change the Card every time when a new card shoule be added to screen----------
 
 pub struct MainState {
     pub deck: Deck,
@@ -81,6 +83,7 @@ impl MainState {
         unsafe { BK_DST = 20.0 };
         self.human.chip = rest_chips;
     }
+    //-----human get a card
     fn human_draw_card(&mut self, ctx: &mut Context) {
         self.human.draw_card(&mut self.deck);
         let get_top = self.human.lightcard.last().unwrap();
@@ -92,6 +95,7 @@ impl MainState {
             },
         ));
     }
+    //------banker get a card
     fn banker_draw_card(&mut self, ctx: &mut Context) {
         if self.banker.lightcard.is_empty() {
             self.banker.draw_card(&mut self.deck);
@@ -104,6 +108,7 @@ impl MainState {
                 },
             ));
         } else if self.banker.darkcard.is_none() {
+            //The second card of banker should be back side
             self.banker.draw_card(&mut self.deck);
             let get_top = &self.banker.darkcard.as_ref().unwrap();
             self.banker_images.push((
