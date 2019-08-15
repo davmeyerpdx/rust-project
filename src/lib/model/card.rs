@@ -243,6 +243,7 @@ impl Deck {
         deck
     }
     pub fn shuffle(&mut self) {
+        //Knuth shuffle algrithom
         let mut rng = thread_rng();
         for i in 0..=51 {
             let j = rng.gen_range(0, 51);

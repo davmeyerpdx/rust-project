@@ -1,15 +1,16 @@
 use crate::*;
 
 pub trait Player {
+    //For both Banker and Human
     fn compute_value(&self) -> u8;
-    fn draw_card(&mut self, deck: &mut Deck);
+    fn draw_card(&mut self, deck: &mut Deck); // get a card
     fn check_blackjack(&mut self);
 }
 
 #[derive(Default)]
 pub struct Banker {
     pub lightcard: Vec<Card>,
-    pub darkcard: Option<Card>,
+    pub darkcard: Option<Card>,     //preparing for graphic version, but it's not designed well.....
     pub blackjack: bool,
     pub flip_card: bool,
 }
@@ -69,6 +70,7 @@ impl Human {
             false
         }
     }
+    //----------To adjust the human's chips---------------
     pub fn win(&mut self) {
         if self.blackjack {
             self.chip += self.bet * 3;
@@ -84,6 +86,8 @@ impl Human {
         self.chip += self.bet;
         self.bet = 0;
     }
+    //----------To adjust the human's chips---------------
+    //----------NOT implemented in graphic----------------
     pub fn get_2xinsurance(&mut self) {
         if self.insurance {
             self.chip += self.bet;
@@ -92,9 +96,11 @@ impl Human {
     pub fn lose_insurance(&mut self) {
         self.bet /= 2;
     }
+    //----------NOT implemented in graphic----------------
 }
 impl Player for Banker {
     fn compute_value(&self) -> u8 {
+        // Count how many Ace, if value > 21, an Acel should be value:1
         let mut count_ace = 0;
         let mut total_value = 0;
         for x in self.lightcard.iter(){
@@ -122,6 +128,7 @@ impl Player for Banker {
         }
     }
     fn draw_card(&mut self, deck: &mut Deck) {
+        //Get a card, for lighter vector first, and get one for darkcard
         if self.lightcard.is_empty() {
             self.lightcard.insert(0, deck.0.pop().unwrap());
         } else if self.darkcard.is_none() {
