@@ -27,18 +27,18 @@ pub struct MainState {
     pub banker: Banker,
     pub banker_images: Vec<(graphics::Image, ggez::mint::Point2<f32>)>,
     pub game_state: i32,
-    pub HM_DST: f32,
-    pub BK_DST: f32,
+    pub hm_dst: f32,
+    pub bk_dst: f32,
 }
 impl MainState {
     fn hm_dst(&mut self) -> f32{
-        let tmp = self.HM_DST;
-        self.HM_DST += SPACE_OUT;
+        let tmp = self.hm_dst;
+        self.hm_dst += SPACE_OUT;
         tmp
     }
     fn bk_dst(&mut self) -> f32{
-        let tmp = self.BK_DST;
-        self.BK_DST += SPACE_OUT;
+        let tmp = self.bk_dst;
+        self.bk_dst += SPACE_OUT;
         tmp
     }
     fn result_draw_reset(&mut self, ctx: &mut Context, text: &str) {
@@ -78,8 +78,8 @@ impl MainState {
             banker: Banker::new(),
             banker_images: Vec::new(),
             game_state: 0,
-            HM_DST: 20.0,
-            BK_DST:20.0,
+            hm_dst: 20.0,
+            bk_dst:20.0,
         };
         self.deck.shuffle();
         self.human.chip = rest_chips;
@@ -143,8 +143,8 @@ impl MainState {
             banker: Banker::new(),
             banker_images: Vec::new(),
             game_state: 0,
-            HM_DST: 20.0,
-            BK_DST:20.0,
+            hm_dst: 20.0,
+            bk_dst:20.0,
         };
         s.deck.shuffle();
         Ok(s)
