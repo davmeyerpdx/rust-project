@@ -17,18 +17,7 @@ const SCREEN_SIZE: (f32, f32) = (600.0, 400.0);
 const SPACE_OUT: f32 = 40.0;
 const BANKER_LINE: f32 = 20.0;
 const HUMAN_LINE: f32 = 340.0;
-static mut HM_DST: f32 = 20.0;
-static mut BK_DST: f32 = 20.0;
-fn hm_dst() -> f32 {
-    let tmp = unsafe { HM_DST };
-    unsafe { HM_DST += SPACE_OUT };
-    tmp
-}
-fn bk_dst() -> f32 {
-    let tmp = unsafe { BK_DST };
-    unsafe { BK_DST += SPACE_OUT };
-    tmp
-}
+
 //------Change the Card every time when a new card shoule be added to screen----------
 
 pub struct MainState {
@@ -38,8 +27,20 @@ pub struct MainState {
     pub banker: Banker,
     pub banker_images: Vec<(graphics::Image, ggez::mint::Point2<f32>)>,
     pub game_state: i32,
+    pub HM_DST: f32,
+    pub BK_DST: f32,
 }
 impl MainState {
+    fn hm_dst(&mut self) -> f32{
+        let tmp = self.HM_DST;
+        self.HM_DST += SPACE_OUT;
+        tmp
+    }
+    fn bk_dst(&mut self) -> f32{
+        let tmp = self.BK_DST;
+        self.BK_DST += SPACE_OUT;
+        tmp
+    }
     fn result_draw_reset(&mut self, ctx: &mut Context, text: &str) {
         for i in &self.human_images {
             let img = &i.0;
@@ -77,20 +78,21 @@ impl MainState {
             banker: Banker::new(),
             banker_images: Vec::new(),
             game_state: 0,
+            HM_DST: 20.0,
+            BK_DST:20.0,
         };
         self.deck.shuffle();
-        unsafe { HM_DST = 20.0 };
-        unsafe { BK_DST = 20.0 };
         self.human.chip = rest_chips;
     }
     //-----human get a card
     fn human_draw_card(&mut self, ctx: &mut Context) {
         self.human.draw_card(&mut self.deck);
+        let hmdst = self.hm_dst();
         let get_top = self.human.lightcard.last().unwrap();
         self.human_images.push((
             graphics::Image::new(ctx, format!("/{}.png", get_top.stringfy())).unwrap(),
             ggez::mint::Point2 {
-                x: hm_dst(),
+                x: hmdst,
                 y: HUMAN_LINE,
             },
         ));
@@ -99,32 +101,35 @@ impl MainState {
     fn banker_draw_card(&mut self, ctx: &mut Context) {
         if self.banker.lightcard.is_empty() {
             self.banker.draw_card(&mut self.deck);
+            let bkdst = self.bk_dst();
             let get_top = self.banker.lightcard.last().unwrap();
             self.banker_images.push((
                 graphics::Image::new(ctx, format!("/{}.png", get_top.stringfy())).unwrap(),
                 ggez::mint::Point2 {
-                    x: bk_dst(),
+                    x: bkdst,
                     y: BANKER_LINE,
                 },
             ));
         } else if self.banker.darkcard.is_none() {
             //The second card of banker should be back side
             self.banker.draw_card(&mut self.deck);
+            let bkdst = self.bk_dst();
             let get_top = &self.banker.darkcard.as_ref().unwrap();
             self.banker_images.push((
                 graphics::Image::new(ctx, "/back_side.png".to_string()).unwrap(),
                 ggez::mint::Point2 {
-                    x: bk_dst(),
+                    x: bkdst,
                     y: BANKER_LINE,
                 },
             ));
         } else {
             self.banker.draw_card(&mut self.deck);
+            let bkdst = self.bk_dst();
             let get_top = self.banker.lightcard.last().unwrap();
             self.banker_images.push((
                 graphics::Image::new(ctx, format!("/{}.png", get_top.stringfy())).unwrap(),
                 ggez::mint::Point2 {
-                    x: bk_dst(),
+                    x: bkdst,
                     y: BANKER_LINE,
                 },
             ));
@@ -138,6 +143,8 @@ impl MainState {
             banker: Banker::new(),
             banker_images: Vec::new(),
             game_state: 0,
+            HM_DST: 20.0,
+            BK_DST:20.0,
         };
         s.deck.shuffle();
         Ok(s)
@@ -312,11 +319,12 @@ impl event::EventHandler for MainState {
         if (x > 60.0 && y > 190.0) && (x < 120.0 && y < 250.0) && self.game_state == 1 {
             // Hit Button
             self.human.draw_card(&mut self.deck);
+            let hmdst = self.hm_dst();
             let get_top = self.human.lightcard.last().unwrap();
             self.human_images.push((
                 graphics::Image::new(ctx, format!("/{}.png", get_top.stringfy())).unwrap(),
                 ggez::mint::Point2 {
-                    x: hm_dst(),
+                    x: hmdst,
                     y: HUMAN_LINE,
                 },
             ));
